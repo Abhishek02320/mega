@@ -1,0 +1,3 @@
+# git ka kaam hota h ki files ko track karna isliye jab ham (git status) likhkar check karenge ki koi folder ji hamne banaya h aur wo empty h to wo track/show ho raha h git per ya nahi than us time wo show nahi hoga terminal per because git files ko track karta h empty folders ko nahi per ham chhahte h ki hamare empty folders bhi track ho to ham us folder me aisa ak (.gitkeep) file bana dete h isse hamara folder track hone lag jata h aur terminal per show hone lagta h hame mean git usko ab track kar raha h 
+
+# aur git ignore ka use ham tab karte h jab hame kisi perticular folder ya file ko track na karna ho mean github per upload na karna ho isliye ham use track nahi karta h aur jis file/folder ko ham track nahi karna chhahte h uska naam git ignore file me likh dete h 
