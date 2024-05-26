@@ -1,0 +1,66 @@
+//basically async/awit ak doosare se jude hue h like agar ahme apne function ko (wait) karana h mean (await) use karna h to ham (async) ka bhi use karenge 
+// javascript ki ak adat h ki ye saare functions ko already async mode per rakhta h mean ak function start hua uska promise(yaani wo koi value return kar raha h ya pending me rakh raha h ) ye jaanne se pahle hi uske neeche ke dooosare function ko bhi execute kar deta aur fhir uska promise aane se pahle hi uske agle function ko bhi execute kar deta h isse ye dikkat aati h ki agar hamara second functon first function ke return value per depand kar raha h to us time ham baaki ke function ko rok nahi sakte wo sabhi ak hi time per execute hote chale jaayenge aur hamara (2nd) functioon pending me rah jaayega isliye ham (await ka)use karte h await hamare us function ko wahi rok deta h aur uske neeche ke doosare function ko tab tak execute nahi hone deta jab tak pahla function hamara promise/value return na kar de 
+// (return)me value milna    //isko ye mat samajhna ki function jab koi value dega tabhi wo return value mana jaayega like return me kuch bhi a sakta h agar function kuch value de raha h execute hone ke baad wo ya fhir kuch value nahi bhi de raha because kuch function void hote h to wo bas execute ho raha iska matalab wo bhi return me value hi de raha h ya err de raha h ye bhi ak value hi return ho rahi h in sabhi ko bolte h (resolve, reject) agar execute hua to (resolve return karega)promise me aur (err) aya to (reject return karega)promise me  yahi sab return karega as  promise function  
+// to kuch aise function hote h jo depend karte h apne uuper ke function per ki wo function return me kuch number dene wala tha jise ham is doosare function me use karne waale the but usne return me kuch bhi nahi diya na koi err na koi value than second function pending me chala jaayega but aage ke functions nahi rukhenge us function ke saare functions execute hote chale jaayenge bina ruke  to aise errors ko resolve karne ke liye ham (await) ka use karte h jo baaki ke neeche waale saare functions tab tak nahi chalenge jab tak ye (await) wala function poora complete nahi ho jata jo chhata h ki hamara function poora chal nahi jaayega aur koi value as return me nahi de deta tab tak neeche ka koi bhi function na chalna
+// async lagaane se ye fayada h ki ye agle function ko green flag dikha deta h ki bhai ye return me promise de raha h to agla function tum execute kar do   // like neeche ke code me async nahi lagayenge to (.then)function error bol jaayega because (.then) depend karta h function per agar function promise return karega like (excute successfully) tabhi ye (.then) procced karega aur agar async nahi lagayenge to hamara (.then ) promise maangega as return aur hamara function return pending me daal dega  and  because dono function ak saath execute ho jaayenge to ye error show hone lagega  
+// ***** note point **** hamesa yaad rakhna ki jo bhi function ke baare me hame pata ki ye function hamara procced hone me time lega than ham us function me (async) ka use ham tab karte h taaki programm agle function ko chalaane ke chaakar me  is prograam ko error na maar de becuase ye promise return karne me time laga raha h due to slow process aur itne me hamara doosara prograam run kar gaya h jo ki is prograam per depend kar raha tha aur isne bhi return me kuch bhi promise abhi diya nahi h to error maar dega to isko bachaane ke liye ham (async use karte h jo green falg de deta h ki bhai prograam hamara promise return kar raha h bas todi der me karega tum aage ke prograam run karo tab tak)       // async hamaare function ko error maarne  se bacha leta h ye show karke ki hamaara function hame promise return karega ye sure h nahi to javascript me to bina ruke saare functions ak ke baad ak activate ho jaayenge aur aur jo function promise return karne me slow h unka error maar denge aur is  process ko ham rok nahi paayenge but async hamaara bhale hi agle functions ko rok nahi paayega execute hone se but ye kah dega ki bhai is function ka promise late aayega but promise return karega ye sure h jiski wajah se javascript error nahi maarti h aur agle prograam to wo already excute kara hi deti h  
+// but normally ham agar async use nahi karte h to  function promise return nahi karta h to javascript wait nahi karega uske promise return karne ka ye turnat (error maar dega aur agle function ) ko execute kar dega but async use kare to wo kahega ki bhai tum agle prograam activate kardo koi dikkat nahi h ye function promise return karega but thodider lagegi but ye promise return karega ye sure h to iski wajah se javascript fhir isko error nahi maarti h aur aage ke function run karaati jaati h but agar ham code me (await) ka use karte h to isse ham apne function se kahte h ki bhai tu promise return kar mai wait kar raha hu tera jab tak tu promise return nahi karega mai aage ke function ko execute nahi hone doonga   
+
+function Akhil (){
+        let ham = new Promise((resolve,reject) =>{
+                return(5)
+        })
+}
+
+Akhil().then( (x)=> {
+        //yaha (.then me pass kiya) ak function jisme pass kiya puraane function se aane waale return value ko 
+        alert(x)
+}
+)
+
+
+
+
+
+// *********************************************************************************************************************************************************************************************************************************************************
+
+
+ const check = async () => {    // aise ham kisi bhi function ko pack karke yaha se kisi bhi page me lejakar apne main file se connect karke is file ko project se connect kar skte h 
+
+   async function harry() {
+        let delhiWeather = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                        resolve("27 Deg")     // ye as return de raha h 
+                }, 2000)  //  mean function ke execute hote hi (2)second ye promise as return me dedo  
+        })
+
+        let bangaloreWeather = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                        resolve("21 Deg")
+                }, 5000)
+        })
+
+        // delhiWeather.then(alert)       //mean jab ye (harry) function execute hoga to  
+        // bangaloreWeather.then(alert)
+        console.log("Fetching Delhi Weather Please wait ...")
+        let delhiW = await delhiWeather
+        console.log("Fetched Delhi Weather: " + delhiW)
+        console.log("Fetching Bangalore Weather Please wait ...")
+        let bangaloreW = await bangaloreWeather
+        console.log("Fetched Bangalore Weather: " + bangaloreW)
+        return [delhiW, bangaloreW]
+}
+
+const cherry = async () => {
+        console.log("Hey I am cherry and I am waiting for completing harry function  ")
+}
+
+const main1 = async () => {
+        console.log("Welcome to weather control room")
+        let a = await harry()
+        let b = await cherry()
+
+}
+main1()
+ }
+export default check
