@@ -98,3 +98,11 @@ connectDB()  // agar databse successfully connect ho jaaye backend se tab hame k
 
 // (npm i bcrypt) iska use hamne (user.model) me kiya h 
 // (npm i jsonwebtoken) use in (user.model)
+
+
+
+// for files/images upload we use here (cloudnary)
+// npm install cloudinary
+// npm i multer
+ // user ke through ham file upload karenge ab file upload karne ka kaam karega (multer as middleware) // multer us file lega aur temporay us file ko hamaare local strorage folder me rakh dega fhir (cloudnary) us file ko local storage se utthakar apne server per usko store kar lega  
+ // hamm direct bhi apne user ki upload mi hui file ko direct multer ke through cloudinary per upload kara sakte the taaki ye do baar notanki na karna pade but ye isliye ki jaise kisi user ne koi file upload ki to usko direct hamne cloudnary per store na kara kar use apne server ke localstorage me store kara liya jisse agar use ko lagta h ki usne koi galat file upload kar di h to usko apni file ko reupload karne ka chance mile   
