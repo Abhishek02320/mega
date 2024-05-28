@@ -16,6 +16,13 @@ app.use(express.static("public")) // is type ki request me user hamaare local st
 
 app.use(cookieParser()) // jo bhi data user ke browser me store h in the form of cookies usko access karne ke liye ya us data ko modify karne ke liye ham is code ka use karenge aur har ak perticular website ka server sirf uske apne server/website ke cookie ka access le sata h kisi aur ka nahi jo usne user ke browser me store karaya h  
 
+
+// import routes
+import userRouter from './routes/user.routers.js'
+
+
+
+
 export {app}
 
 
