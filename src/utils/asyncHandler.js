@@ -3,8 +3,9 @@
 
 // first method (promise method )
 const asyncHandler = (fn) => {
-    (req,res,next) => {   // ye hamne ak bada function ke ander chhota function banaya h aur usi chhote function ke promise ko return kar diya h is bade function ke return me 
-     Promise.resolve(fn(req, res, next)).reject((err) => next(err) )  
+   return (req,res,next) => {   // ye hamne ak bada function ke ander chhota function banaya h aur usi chhote function ke promise ko return kar diya h is bade function ke return me 
+       // agar aapka function ak higher order function h mean aapke function me kisi aur file ke function ko pass kiya jaayega aur fhir wapas usi file me bheja jaaye jaha se wo aya h to aapko apne function me return likhan compulsory hoga nahi to return na likhne ki wajah se error aane ke chances h
+        Promise.resolve(fn(req, res, next)).reject((err) => next(err) )  
      // promise me hame agar (resolve mila) mean function executed successfully and perform that function jo ki (async await ke raper me hamne closed h jis file me is file ko call kara kar unke code ko close kiya h in async await functions me  ) aur agar reject mila to (error show hoga aur agle waale function ko execute karenge aisa hamne apne (reject)promise me likha h mena agar error aayi to doosara function execute kar do ) 
 
     }
