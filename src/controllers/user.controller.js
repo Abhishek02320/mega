@@ -1,6 +1,7 @@
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 
 
@@ -39,17 +40,51 @@ throw new ApiError(400, "fullName is required")    // agar is tarike ka error ho
 
 if(
    [email, username, password].some(    //sabhi varible jisme condition check karni h unko (arry) me band kiya (.some)property ka use kiya jo ki hame in return (true/false) return karega  
-      (filed) => {filed?.trim() === ""}      // yaha hamne jo pass kiya h uska naam kuch bhi rakho because uske nader pass to (email,username) in fieldname ke fields hi pass karenge jisme user data send karke bhej raha h// ab {}paranthesis me condition likhenge ki fields agar h in fieldsnames me to un filds me trim karo mean empty spaces hata do fields mese aur agar fhir bhi field empty h mean hamara field empty h to yaha se ham (if)condition activate karayege aur usse kya kaam karana h wo likh denge   
+      (filed) => {filed?.trim() === ""}      // yaha hamne jo pass kiya h uska naam kuch bhi rakho because uske ander pass to (email,username) in fieldname ke fields hi pass karenge jisme user data send karke bhej raha h// ab {}paranthesis me condition likhenge ki fields agar h in fieldsnames me to un filds me trim karo mean empty spaces hata do fields mese aur agar fhir bhi field empty h mean hamara field empty h to yaha se ham (if)condition activate karayege aur usse kya kaam karana h wo likh denge   
    )
 ){
    throw new ApiError(400, "all filds are required")
 }
 
-USer.findOne( // User naam ka model hamne models file me banaya h jo ki directly connected h mongodb se jo backend se direct data mongodb me bhejta h // to yaha ham iski help se databse me direct check kar paayenge jaha isne apna kudka ak alag section banaya hoga jaha saare (new/old)users ka (username, email) store rakha hoga waha ye (findone )propertyy use karenge jiska kaam h data me check karna match karna // ab jaise yaha user model meaake jo data store ho raha h us data me jo bhi naya user detail jo frontend se a raha h wo kisi exixt user ke  (username, email ) se match to nahi kar raha h agar kar raha h mean ye user hamar already backend me exixt kar raha h isko dubara is detail ke saath account mat banaane do rok do // to ye (findOne)bas exixt data me new coming data ko match karta h aur jo matched data sabse pahle mil jaayega data matching me usi ko as retun of matching dataye funtion return me de dega ye nahi h ki poore data mo match karega iska kaam bas itna h jaise hi matched data mila bas return me dedo aur aage matched data dhoodne ki jarrurat nahi h 
+const existedUser = User.findOne( // User naam ka model hamne models file me banaya h jo ki directly connected h mongodb se jo backend se direct data mongodb me bhejta h // to yaha ham iski help se databse me direct check kar paayenge jaha isne apna kudka ak alag section banaya hoga jaha saare (new/old)users ka (username, email) store rakha hoga waha ye (findone )propertyy use karenge jiska kaam h data me check karna match karna // ab jaise yaha user model me aake jo data store ho raha h us data me jo bhi naya user detail jo frontend se a raha h wo kisi exixt user ke  (username, email ) se match to nahi kar raha h agar kar raha h mean ye user hamar already backend me exixt kar raha h isko dubara is detail ke saath account mat banaane do rok do // to ye (findOne)bas exixt data me new coming data ko match karta h aur jo matched data sabse pahle mil jaayega data matching me usi ko as retun of matching dataye funtion return me de dega ye nahi h ki poore data mo match karega iska kaam bas itna h jaise hi matched data mila bas return me dedo aur aage matched data dhoodne ki jarrurat nahi h 
    {
-      
+    $or: [{username}, {email}]      // yaha hamne ($)lagaake condition property ka use kar liya iase hi ham (and,or,not) ka use kar sakte h jaise ye kah raha h ki agar (username) ya (email) dono mese kisi bhi field ka data jo frontend se a raha h wo databse me stored users model me stored user ke data se match karta h to us user ka matched hone wwale field ke data ko return me dedo taaki pata chal jaayega ki is naam ka data alredy databse me exixt kar raha h 
    })
 
+if (existedUser){  // agar uuper ke function ke chalne se aisa koi user nila jiska email ya username databse me exixt kar raha h to us user ke us matched field ke data  ko as return me upper ka function dedega jo ki (if) condition ke liye as (true) show hoga to ye active ho jaayega  
+   throw new ApiError(409, "User with same email or username alredy exixt")
+}
+
+// userrouter ne pahle hi hamari files ko upload kara kiya h local storage me to ab yaha jab ham apne naye user ko register karte h mean uska ak naya account banaate h to usse kuch detils lete h jo jamne uuper leli aur verify bhi karwa ki ki ye user exixt nahi karta h ab hamne register karne se pahle user se ak cheej maangi thi that is (file for avatar)using middleware aur usko localstorage me store bhi kara loya h but yaha is file me usko karna jarruri h ki hamne wo file li tabhi to wo register user ki file me count hogi ki ye perticular is user ki file h     
+const avatarLocalPath = req.files?.avatar[0]?.path;
+// jab bhi hame body se data chahiye hota h like form or json data from fontend to wo ham (express) ki help se (req.body)karke (body)se aane waale data ka access le lete h // ye to hua data handling but agar hame file handling karna ho to ham use karte h (multer) multer ka use karke agar ham (req.files)likhte h to ye hame body se aane waali har ak file like (png,pdf)sabhi filo ka access deta h ab hamne pane middleware ki help se multer ka use karke user se multiple files(coverpage,avatar) ko localstorage me store kara liya h aur (req.files karke)ham un body me store files ka access le sakte h 
+//yaha hamne (req.files)karke files ka access liya h aur kahi koi error na aajaye isliye safeside ke liye pooch lete h (?)lagakar ki files ka access h ya nahi agar h to isme jitni files stored h localstore me usme se (avatar)naam ki file section ke array mese jo file us arrya me sabse uuper h usko dedo because is arrya me aur bhi baake users ke avatar files store h but hame to apne current user ke avatar ka access chaiye jisko hame during register new user ke data me store karna h   // ab ham yaha ye bhi kah rahe h ki bhai ye batao ki us array me h (0)th position per koi file h ya nahi agar g to uska localstorage ka path hame dedo ki wo kaha located h    
+const coverImageLocalPath =req.files?.coverImage[0]?.path;
+
+
+if(!avatarLocalPath){
+   throw new ApiError(400, "avatar image is required")
+}
+
+// abhi tak hamne apne user se aane waale register ke data ko body se extract kiya usko check kiya empty to nahi h usko verify kiya ki copied/exixting to nahi h fhir jo files hamne multer se upload karwaai unka localstorage se file ka path nikalwa liya fhir ab unfiles ko ham cloudnary per upload karne waale h because yaha tak ye confirm ho chuka h ki ye files hi hamari store hogi as databse inko cloudnary per upload karenge aur ye sara kaam sirf ak single user ke liye kar rahe h jo ki pahli baar register karne aaya h is website per 
+
+const avatar = await uploadOnCloudinary(avatarLocalPath)   //(uploadOnCloudinary) ye cloudnary file ka function h jiska kaam h files ko cloud per upload karwana uske liye ye un files ka path maang raha h as url form wo hamne isme pass kar diya h path ab files upload hone me time leti h isliye hamne yaha (await) ka use kiya h ki bhai jab tak hamara ye upload na ho jaaye tab tak is file ke aage ke functions ko procced na kiya jaaye 
+const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+
+if(!avatar){
+   throw new ApiError(400, "avatar image is not uploaded on cloud")
+}
+
+
+User.create({   // ab ahamne yaha jo bhi data is file se le liya h user se usko apne monodb me store karenge now jaisa hame pata h ki (User.model file ka User)function directly mongodb se directly connected data databse me directly store karne ke liye ya data accesss karne ke liye mongodb databse se to yaha ham un varaibes to mention karenge jiska data ham databse me store ke liye bhej rahe h  
+   fullName, // ye exect aise hi object form me databse me store hoga ye data 
+   avatar:avatar.url,    // yaha ye avtar varaible me kaafi taike ka data hota h jo kaam ka nahi hota h jab ham apni multer ki file kholenge to hame pata chalega ki us file me wo file ko upload karata h aur response me sab kuch return karta h aur sab kuch me bahut kuch ata h jabki hame bas apne api uploded file ka (url)kaam ka h aur yaha ye (avatar,coverimege)varaible multer use kar rahe h to isliye return me hame faaltu cheeje na mile sirf url mile multer se ise liye ham yaha specify kar denge because (avatar, coverimage)multer  ke finction ka use kar rahi h to wo return me kaafi kuch apne ander contain kiye hui h isliye hamne yaha direct(avatar) na likhne ki jagah (avatar.url) likha nahi to wo saari unused data bhi is object me store ho jata databse me   
+   coverImage: coverImage?.url || "", // yaha hame hamne apne (avatar) file ko baar baar recheck kar liya ki user se ye file aayi ki nahi iska url hame multer than cloudnary se mila ki nahi yaani avatar ki file hame user se mili h ki nhi ye hamne conditioon lagaake check kar liya but (coverImage)ko chek nahi kiya aur agar hame coverimage ka url nahi mil raha h mean koi dikkat hui h ya to user ne file hi upload nahi kiya coverimage ka to url nahi miega aur aise me ham us coverimage ko yaha databse e store karaane ke liye call karenge to error maar jaayega to eror se bachne ke liye ham yaha condition likh rahe h ki agar (url) h to store kara do nahi to empty space store kara do   
+   email,
+   password,
+   username : username.toLowerCase()
+
+})
 
 } )
 

@@ -21,7 +21,8 @@ router.route("/register").post(
 
     ]),
     registerUser)    // jab is file ko active kiya jaayega mean is route ko active kiya jaayega (app.js) file ki wajahse se (/user) route ki request maar kar aur user hamara (user) page per ajaayega ab jab isper (/register) request maari jaayegi to ye file hamare user ko redirect karegi (register)page per jaha (post)method ka use karke ham apne (registerUser) ki file me likhe contoller ke response ko us page per render karaayenge ab wo page hamse kya kah raha h response me hame kya bhej raha h wo sab hame wahi controller file bata sakti h jo uske hamne response me likha hoga 
-export default router
+
+    export default router
 
 
 
