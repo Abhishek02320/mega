@@ -2,6 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
 
 
 
@@ -76,7 +77,7 @@ if(!avatar){
 }
 
 
-User.create({   // ab ahamne yaha jo bhi data is file se le liya h user se usko apne monodb me store karenge now jaisa hame pata h ki (User.model file ka User)function directly mongodb se directly connected data databse me directly store karne ke liye ya data accesss karne ke liye mongodb databse se to yaha ham un varaibes to mention karenge jiska data ham databse me store ke liye bhej rahe h  
+const user = await User.create({   // ab ahamne yaha jo bhi data is file se le liya h user se usko apne monodb me store karenge now jaisa hame pata h ki (User.model file ka User)function directly mongodb se directly connected data databse me directly store karne ke liye ya data accesss karne ke liye mongodb databse se to yaha ham un varaibes to mention karenge jiska data ham databse me store ke liye bhej rahe h  
    fullName, // ye exect aise hi object form me databse me store hoga ye data 
    avatar:avatar.url,    // yaha ye avtar varaible me kaafi taike ka data hota h jo kaam ka nahi hota h jab ham apni multer ki file kholenge to hame pata chalega ki us file me wo file ko upload karata h aur response me sab kuch return karta h aur sab kuch me bahut kuch ata h jabki hame bas apne api uploded file ka (url)kaam ka h aur yaha ye (avatar,coverimege)varaible multer use kar rahe h to isliye return me hame faaltu cheeje na mile sirf url mile multer se ise liye ham yaha specify kar denge because (avatar, coverimage)multer  ke finction ka use kar rahi h to wo return me kaafi kuch apne ander contain kiye hui h isliye hamne yaha direct(avatar) na likhne ki jagah (avatar.url) likha nahi to wo saari unused data bhi is object me store ho jata databse me   
    coverImage: coverImage?.url || "", // yaha hame hamne apne (avatar) file ko baar baar recheck kar liya ki user se ye file aayi ki nahi iska url hame multer than cloudnary se mila ki nahi yaani avatar ki file hame user se mili h ki nhi ye hamne conditioon lagaake check kar liya but (coverImage)ko chek nahi kiya aur agar hame coverimage ka url nahi mil raha h mean koi dikkat hui h ya to user ne file hi upload nahi kiya coverimage ka to url nahi miega aur aise me ham us coverimage ko yaha databse e store karaane ke liye call karenge to error maar jaayega to eror se bachne ke liye ham yaha condition likh rahe h ki agar (url) h to store kara do nahi to empty space store kara do   
@@ -84,8 +85,22 @@ User.create({   // ab ahamne yaha jo bhi data is file se le liya h user se usko 
    password,
    username : username.toLowerCase()
 
-})
+})   // ab ye saari entries hamari object ki form me store hongi databse me but jab ye entries store hongi tab mongodb inhe ak specific(id) deta h jo perticular naye data entry in datbse ko represent karti h to mongodb ak (_id)naam ke varaible me ak (id) deta h nayi entry koo 
 
+
+const createdUser = await User.findById(User._id).select( //abhi ham (user) varaible me check kar rah eh ki ye (id) naam ka varaible hame mila h mongodb se ya nahi agar mila h mean ye (iuser naam ka varaible/model ) empty nahi h isme entries aake store hui h jo ki hamare user ne store karai h (User.create) karke // is id ke milne se ye confirmation mil jata j hame ki data jo hame pane databse me store karaya h wo successfully store ho gaya h because tanhi ye (id)generate hui h jo ki mogodb me ne ki h jab entrires store karai gayi databse me 
+             "-password -refreshToken"          // (select) hamara ak method h javascript ka jo ki use kiya jata h ki aapko kya kya cheeje select nahi karaani h unka naam likho is method me is method me bydefult saare fields selected hote h ki sabhi field hame show karne h databse me is perticular model ke single user ke object me but jinka name ham is method me likh dete h un fields ke data ko ye undefined store karata h databse me for security purpose like ham chhahte h ki password field ke detail mean passworrd hamara databse me store ho but wo show na ho databse me isliye us filed ki enrty ko undefined show karaate h ham apne databs me
+             //yaha hamne (select)method ka use (.select) karke chaining method se kiya h mean direct use nahi kiya h because ham yaha isko specify kara rahe h ki jo user tumhe is (.findById) se mile us user ki data enrty me tumhe ye work perform karna h to chaining karke ham refernce dete h ki kiske saath ye kaam perform karna h  
+              )
+
+              if(!createdUser){
+               throw new ApiError(500, "while register user something wrong happen") 
+              }
+
+// abhi tak hamne sirf user ko register kiya usko databse me store karaya aur koi error na a rahi ho ye check kiya but now finaaly hamara user register ho chuka h successfully iska bhi to hame response dena jarruri h ki bhai sab kaam ak dam set h sab kuch ho gaya aur user ki details ko databse me store kara liya h mean user register ho gaya h to iska ak final success wala response dedo to uske liye ham neeche response code likhenge
+              return res.status(201).json(   
+               new ApiResponse(200, createdUser, "user registered successfully")
+              )
 } )
 
 
