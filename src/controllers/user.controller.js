@@ -47,7 +47,7 @@ if(
    throw new ApiError(400, "all filds are required")
 }
 
-const existedUser = User.findOne( // User naam ka model hamne models file me banaya h jo ki directly connected h mongodb se jo backend se direct data mongodb me bhejta h // to yaha ham iski help se databse me direct check kar paayenge jaha isne apna kudka ak alag section banaya hoga jaha saare (new/old)users ka (username, email) store rakha hoga waha ye (findone )propertyy use karenge jiska kaam h data me check karna match karna // ab jaise yaha user model me aake jo data store ho raha h us data me jo bhi naya user detail jo frontend se a raha h wo kisi exixt user ke  (username, email ) se match to nahi kar raha h agar kar raha h mean ye user hamar already backend me exixt kar raha h isko dubara is detail ke saath account mat banaane do rok do // to ye (findOne)bas exixt data me new coming data ko match karta h aur jo matched data sabse pahle mil jaayega data matching me usi ko as retun of matching dataye funtion return me de dega ye nahi h ki poore data mo match karega iska kaam bas itna h jaise hi matched data mila bas return me dedo aur aage matched data dhoodne ki jarrurat nahi h 
+const existedUser = await User.findOne( // User naam ka model hamne models file me banaya h jo ki directly connected h mongodb se jo backend se direct data mongodb me bhejta h // to yaha ham iski help se databse me direct check kar paayenge jaha isne apna kudka ak alag section banaya hoga jaha saare (new/old)users ka (username, email) store rakha hoga waha ye (findone )propertyy use karenge jiska kaam h data me check karna match karna // ab jaise yaha user model me aake jo data store ho raha h us data me jo bhi naya user detail jo frontend se a raha h wo kisi exixt user ke  (username, email ) se match to nahi kar raha h agar kar raha h mean ye user hamar already backend me exixt kar raha h isko dubara is detail ke saath account mat banaane do rok do // to ye (findOne)bas exixt data me new coming data ko match karta h aur jo matched data sabse pahle mil jaayega data matching me usi ko as retun of matching dataye funtion return me de dega ye nahi h ki poore data mo match karega iska kaam bas itna h jaise hi matched data mila bas return me dedo aur aage matched data dhoodne ki jarrurat nahi h 
    {
     $or: [{username}, {email}]      // yaha hamne ($)lagaake condition property ka use kar liya iase hi ham (and,or,not) ka use kar sakte h jaise ye kah raha h ki agar (username) ya (email) dono mese kisi bhi field ka data jo frontend se a raha h wo databse me stored users model me stored user ke data se match karta h to us user ka matched hone wwale field ke data ko return me dedo taaki pata chal jaayega ki is naam ka data alredy databse me exixt kar raha h 
    })
@@ -79,7 +79,7 @@ if(!avatar){
 
 const user = await User.create({   // ab ahamne yaha jo bhi data is file se le liya h user se usko apne monodb me store karenge now jaisa hame pata h ki (User.model file ka User)function directly mongodb se directly connected data databse me directly store karne ke liye ya data accesss karne ke liye mongodb databse se to yaha ham un varaibes to mention karenge jiska data ham databse me store ke liye bhej rahe h  
    fullName, // ye exect aise hi object form me databse me store hoga ye data 
-   avatar:avatar.url,    // yaha ye avtar varaible me kaafi taike ka data hota h jo kaam ka nahi hota h jab ham apni multer ki file kholenge to hame pata chalega ki us file me wo file ko upload karata h aur response me sab kuch return karta h aur sab kuch me bahut kuch ata h jabki hame bas apne api uploded file ka (url)kaam ka h aur yaha ye (avatar,coverimege)varaible multer use kar rahe h to isliye return me hame faaltu cheeje na mile sirf url mile multer se ise liye ham yaha specify kar denge because (avatar, coverimage)multer  ke finction ka use kar rahi h to wo return me kaafi kuch apne ander contain kiye hui h isliye hamne yaha direct(avatar) na likhne ki jagah (avatar.url) likha nahi to wo saari unused data bhi is object me store ho jata databse me   
+   avatar: avatar.url,    // yaha ye avtar varaible me kaafi taike ka data hota h jo kaam ka nahi hota h jab ham apni multer ki file kholenge to hame pata chalega ki us file me wo file ko upload karata h aur response me sab kuch return karta h aur sab kuch me bahut kuch ata h jabki hame bas apne api uploded file ka (url)kaam ka h aur yaha ye (avatar,coverimege)varaible multer use kar rahe h to isliye return me hame faaltu cheeje na mile sirf url mile multer se ise liye ham yaha specify kar denge because (avatar, coverimage)multer  ke finction ka use kar rahi h to wo return me kaafi kuch apne ander contain kiye hui h isliye hamne yaha direct(avatar) na likhne ki jagah (avatar.url) likha nahi to wo saari unused data bhi is object me store ho jata databse me   
    coverImage: coverImage?.url || "", // yaha hame hamne apne (avatar) file ko baar baar recheck kar liya ki user se ye file aayi ki nahi iska url hame multer than cloudnary se mila ki nahi yaani avatar ki file hame user se mili h ki nhi ye hamne conditioon lagaake check kar liya but (coverImage)ko chek nahi kiya aur agar hame coverimage ka url nahi mil raha h mean koi dikkat hui h ya to user ne file hi upload nahi kiya coverimage ka to url nahi miega aur aise me ham us coverimage ko yaha databse e store karaane ke liye call karenge to error maar jaayega to eror se bachne ke liye ham yaha condition likh rahe h ki agar (url) h to store kara do nahi to empty space store kara do   
    email,
    password,
@@ -88,7 +88,7 @@ const user = await User.create({   // ab ahamne yaha jo bhi data is file se le l
 })   // ab ye saari entries hamari object ki form me store hongi databse me but jab ye entries store hongi tab mongodb inhe ak specific(id) deta h jo perticular naye data entry in datbse ko represent karti h to mongodb ak (_id)naam ke varaible me ak (id) deta h nayi entry koo 
 
 
-const createdUser = await User.findById(User._id).select( //abhi ham (user) varaible me check kar rah eh ki ye (id) naam ka varaible hame mila h mongodb se ya nahi agar mila h mean ye (iuser naam ka varaible/model ) empty nahi h isme entries aake store hui h jo ki hamare user ne store karai h (User.create) karke // is id ke milne se ye confirmation mil jata j hame ki data jo hame pane databse me store karaya h wo successfully store ho gaya h because tanhi ye (id)generate hui h jo ki mogodb me ne ki h jab entrires store karai gayi databse me 
+const createdUser = await User.findById(user._id).select( //abhi ham (user) varaible me check kar rah eh ki ye (id) naam ka varaible hame mila h mongodb se ya nahi agar mila h mean ye (iuser naam ka varaible/model ) empty nahi h isme entries aake store hui h jo ki hamare user ne store karai h (User.create) karke // is id ke milne se ye confirmation mil jata j hame ki data jo hame pane databse me store karaya h wo successfully store ho gaya h because tanhi ye (id)generate hui h jo ki mogodb me ne ki h jab entrires store karai gayi databse me 
              "-password -refreshToken"          // (select) hamara ak method h javascript ka jo ki use kiya jata h ki aapko kya kya cheeje select nahi karaani h unka naam likho is method me is method me bydefult saare fields selected hote h ki sabhi field hame show karne h databse me is perticular model ke single user ke object me but jinka name ham is method me likh dete h un fields ke data ko ye undefined store karata h databse me for security purpose like ham chhahte h ki password field ke detail mean passworrd hamara databse me store ho but wo show na ho databse me isliye us filed ki enrty ko undefined show karaate h ham apne databs me
              //yaha hamne (select)method ka use (.select) karke chaining method se kiya h mean direct use nahi kiya h because ham yaha isko specify kara rahe h ki jo user tumhe is (.findById) se mile us user ki data enrty me tumhe ye work perform karna h to chaining karke ham refernce dete h ki kiske saath ye kaam perform karna h  
               )
@@ -99,9 +99,31 @@ const createdUser = await User.findById(User._id).select( //abhi ham (user) vara
 
 // abhi tak hamne sirf user ko register kiya usko databse me store karaya aur koi error na a rahi ho ye check kiya but now finaaly hamara user register ho chuka h successfully iska bhi to hame response dena jarruri h ki bhai sab kaam ak dam set h sab kuch ho gaya aur user ki details ko databse me store kara liya h mean user register ho gaya h to iska ak final success wala response dedo to uske liye ham neeche response code likhenge
               return res.status(201).json(   
-               new ApiResponse(200, createdUser, "user registered successfully")
+               new ApiResponse(200, "user registered successfully")
               )
+
 } )
 
 
 export {registerUser}
+
+
+
+
+// backend me is file ke code ko test karne ke liye ham thunderclient ka use karenge 
+// body < form <details insert 
+// ab ham ye soch rahe honge ki (<body < json) me likh sakte the fhir (body < form) ka use kyu kar rahe beacuse (json) type me ham files ko insert nahi kar sakte jaise (body < form) option me ham apni files like (png,pdf) send kar sakte h like a frontend but (json) format me sirf data like text form me (key, value) send kar sakte but files nahi (form option)isme ak option hota h file ka usper click karke ham file option ko activate kar sakte h jiski help se ham (key,value)text ke saath (file)ko bhi send kar sakte h like a frontend 
+//
+
+
+
+
+
+
+
+
+
+// monodb altlas me ham databse < dataservices < collection mee jakee ham apna frontend se send kiye hue data ko dekh sakte h jo ki waha aake store hua hoga 
+//aur jo (img,pdf) files hamne send ki hogi wo hamaare localstorage me (public < temp)folder me aake store ho gayi hogi fhir waha se cloudnary per upload hoke uski ak link link generate hui hogi jo ki database me user ke bane hue object jaha uska saara data store h waha aake store ho gayi hogi
+
+// cludnary < media explorer me file dikh jaayegi jo ki frontend se localstorage and then yaha aake store hui hogi

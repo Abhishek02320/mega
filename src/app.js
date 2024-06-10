@@ -21,7 +21,7 @@ app.use(cookieParser()) // jo bhi data user ke browser me store h in the form of
 import userRouter from './routes/user.routers.js'
 // actual me hamari (user.routers)file me hamne apne function export kiya h (router) ke naam se aur us function ko yaha import kiya h bina {}paranthesis lagaaye (userRouter)naam se jiski wajah se misconception ki wajah se hamari file eror maar sakti h to aise ham agar chhahte h ki ham apni file me funtion ko export kisi aur naam se kare aur import kisi aur man chhhahe naam se bina {}paranthesis lagaaye to uske liye hame apne file ke function ko export (default) karna hoga agar (export default route) likha hoga to ham yaha us file ke function ko kisi bhi man chhahe naam se import kara sakte h but agar hamne (export {route} aise likha to yaha import isi naam se karana hoga aur {}paranthesis lagaake ki import karna hoga agar bina {}paranthesis ke import kiya to error a jaayega aur man chaha naam nahi likh sakte exect wahi naam se import karo jisse export kiya h ) 
 // agar ham isi file me routes aur aur isi file me (controllers) banante t to ham direct (app.get) ka use kar sakte the but kyuki hamne routes ko alag file me likha h aur contollers ko alag isliye ab hame middleware ka use karna hoga router ko is file me call karakar run karaane ke liye so we use here (app.use)
-app.use("/users", userRouter)  // ab yaha hamne apna address de diya aur jis router per request bhejkar uska response ko render karwana h us router ka naam bhi likh diya h  yaha   
+app.use("/api/v1/users", userRouter)  // ab yaha hamne apna address de diya aur jis router per request bhejkar uska response ko render karwana h us router ka naam bhi likh diya h  yaha   
 
 
 
